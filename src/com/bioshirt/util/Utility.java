@@ -2,7 +2,6 @@ package com.bioshirt.util;
 
 import java.sql.Date;
 import java.util.ArrayList;
-import java.util.Iterator;
 
 import org.json.JSONArray;
 import org.json.JSONException;

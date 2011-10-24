@@ -1,9 +1,6 @@
 package com.bioshirt.util;
 
-import static org.junit.Assert.*;
 import junit.framework.Assert;
-
-import com.bioshirt.util.PropertyHelper;
 
 import org.junit.Test;
 

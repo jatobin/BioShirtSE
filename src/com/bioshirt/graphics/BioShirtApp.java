@@ -1,21 +1,18 @@
 package com.bioshirt.graphics;
 
-import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.EventQueue;
 
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
-import javax.swing.border.EmptyBorder;
+import javax.swing.JPasswordField;
+import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 import javax.swing.SpringLayout;
-import javax.swing.JPasswordField;
-import javax.swing.JButton;
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
-import javax.swing.JTabbedPane;
-import java.awt.Color;
-import javax.swing.JComboBox;
-import javax.swing.DefaultComboBoxModel;
+import javax.swing.border.EmptyBorder;
 
 public class BioShirtApp extends JFrame {
 
@@ -102,7 +99,7 @@ public class BioShirtApp extends JFrame {
 		comboBox.setModel(new DefaultComboBoxModel(new String[] {"Accelerometer : All", "Accelerometer : Date", "Cardiogram : All", "Cardiogram : Date", "Flex : All", "Flex : Date"}));
 		panel_1.add(comboBox);
 		
-		JButton btnDate = new JButton("Date");
+		JButton btnDate = new JButton("Choose Date");
 		sl_panel_1.putConstraint(SpringLayout.NORTH, btnDate, 6, SpringLayout.SOUTH, comboBox);
 		sl_panel_1.putConstraint(SpringLayout.EAST, btnDate, -10, SpringLayout.EAST, panel_1);
 		panel_1.add(btnDate);
