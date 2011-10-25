@@ -2,11 +2,13 @@ package com.bioshirt.graphics;
 
 import java.awt.Color;
 import java.awt.EventQueue;
+import java.util.Random;
 
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTabbedPane;
@@ -14,16 +16,50 @@ import javax.swing.JTextField;
 import javax.swing.SpringLayout;
 import javax.swing.border.EmptyBorder;
 
+import com.bioshirt.services.SimpleRead;
+
 public class BioShirtApp extends JFrame {
 
 	private JPanel contentPane;
 	private JTextField txtUsername;
 	private JPasswordField pwdPassword;
+	protected static  SimpleRead sr = null;
+	private static final JLabel flexValue = new JLabel("Flex Value");
+	private static final Random r = new Random();
 
 	/**
 	 * Launch the application.
 	 */
 	public static void main(String[] args) {
+		
+		Thread t = new Thread(new Runnable() {
+			public void run() {
+				while (true) {
+					 sr = SimpleRead.getInstance();
+					flexValue.setText(String.valueOf(sr.getHexString()));
+					System.out.println("Running poller for new characters");
+
+					try {
+						Thread.sleep(1000);
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						System.out.print("Interrupted");
+						e.printStackTrace();
+					}
+				}
+
+			}
+
+		});
+		t.setPriority(Thread.MAX_PRIORITY);
+		t.start();
+		
+//		try {
+//			sr = SimpleRead.getInstance();
+//		} catch(Exception e) {
+//			e.printStackTrace();
+//		}
+	
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
@@ -34,6 +70,7 @@ public class BioShirtApp extends JFrame {
 				}
 			}
 		});
+
 	}
 
 	/**
@@ -106,6 +143,11 @@ public class BioShirtApp extends JFrame {
 		
 		JButton btnExecute = new JButton("Execute");
 		sl_panel_1.putConstraint(SpringLayout.SOUTH, btnExecute, 0, SpringLayout.SOUTH, panel_2);
+		
+		JLabel lblFlex = new JLabel("Flex");
+		panel_2.add(lblFlex);
+		panel_2.add(flexValue);
+		
 		sl_panel_1.putConstraint(SpringLayout.EAST, btnExecute, -10, SpringLayout.EAST, panel_1);
 		panel_1.add(btnExecute);
 	}
