@@ -2,6 +2,8 @@ package com.bioshirt.graphics;
 
 import java.awt.Color;
 import java.awt.EventQueue;
+import java.sql.Date;
+import java.sql.Timestamp;
 import java.util.Random;
 
 import javax.swing.DefaultComboBoxModel;
@@ -16,6 +18,12 @@ import javax.swing.JTextField;
 import javax.swing.SpringLayout;
 import javax.swing.border.EmptyBorder;
 
+import org.apache.commons.codec.binary.Hex;
+
+import com.bioshirt.dao.STIDAO;
+import com.bioshirt.dao.STIDAOImpl;
+import com.bioshirt.dto.Device;
+import com.bioshirt.dto.SensorTimeInstance;
 import com.bioshirt.services.SimpleRead;
 
 public class BioShirtApp extends JFrame {
@@ -26,6 +34,9 @@ public class BioShirtApp extends JFrame {
 	protected static  SimpleRead sr = null;
 	private static final JLabel flexValue = new JLabel("Flex Value");
 	private static final Random r = new Random();
+	private static final STIDAO stidao = new STIDAOImpl();
+	
+	private static Device device = new Device("TESTDEVICEID");
 
 	/**
 	 * Launch the application.
@@ -35,12 +46,21 @@ public class BioShirtApp extends JFrame {
 		Thread t = new Thread(new Runnable() {
 			public void run() {
 				while (true) {
-					 sr = SimpleRead.getInstance();
-					flexValue.setText(String.valueOf(sr.getHexString()));
+//					 sr = SimpleRead.getInstance();
+//					flexValue.setText(String.valueOf((r.nextLong())));
+					byte[] bytes = new byte[2];
+					//replace next lines with code to get the input from serial io
+					r.nextBytes(bytes);
+					String randomHex = Hex.encodeHexString(bytes);
+					System.out.println(randomHex.length());
+					flexValue.setText(randomHex);
+					Timestamp date = new Timestamp(System.currentTimeMillis());
+					stidao.insertSTI(new SensorTimeInstance(device, date, randomHex));
+					
 					System.out.println("Running poller for new characters");
 
 					try {
-						Thread.sleep(1000);
+						Thread.sleep(2000);
 					} catch (InterruptedException e) {
 						// TODO Auto-generated catch block
 						System.out.print("Interrupted");
@@ -147,7 +167,7 @@ public class BioShirtApp extends JFrame {
 		JLabel lblFlex = new JLabel("Flex");
 		panel_2.add(lblFlex);
 		panel_2.add(flexValue);
-		
+	
 		sl_panel_1.putConstraint(SpringLayout.EAST, btnExecute, -10, SpringLayout.EAST, panel_1);
 		panel_1.add(btnExecute);
 	}

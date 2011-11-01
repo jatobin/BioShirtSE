@@ -36,7 +36,7 @@ public class Utility {
 			for (int i = 0; i < arr.length(); i++ ) {
 				points.add(arr.getDouble(i));
 			}
-			flexData = new FlexData(points);
+		//	flexData = new FlexData(points);
 			
 			
 			
@@ -76,7 +76,7 @@ public class Utility {
 //				}		
 //			}
 			
-			return new JSONInterpretedBean(cardioData, accData, flexData, device, date);
+			return new JSONInterpretedBean(cardioData, accData, null, device, date);
 			
 			
 			// get the time from the thing.

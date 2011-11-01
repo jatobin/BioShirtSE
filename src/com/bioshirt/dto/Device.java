@@ -4,6 +4,11 @@ public class Device {
 	
 	private String deviceID;
 	
+	public Device(String deviceID) {
+		super();
+		this.deviceID = deviceID;
+	}
+
 	public String getDeviceID() {
 		return deviceID;
 	}

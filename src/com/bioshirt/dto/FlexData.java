@@ -1,21 +1,31 @@
 package com.bioshirt.dto;
 
-import java.util.ArrayList;
+
 
 public class FlexData {
-
-	private ArrayList<Double> doublePoints;
-
-	public FlexData(ArrayList<Double> doublePoints) {
-		super();
-		this.doublePoints = doublePoints;
+	public static final Integer EXPECTED_FLEX_VALUE = 3210;
+	private String rawHex;
+	private Integer convertedValue;
+	
+	public FlexData(String rawHex) {
+		this.rawHex = rawHex;
+		this.convertedValue = Integer.decode("0x"+rawHex);
 	}
 
-	public ArrayList<Double> getDoublePoints() {
-		return doublePoints;
+	public String getRawHex() {
+		return rawHex;
 	}
 
-	public void setDoublePoints(ArrayList<Double> DoublePoints) {
-		this.doublePoints = doublePoints;
+	public void setRawHex(String rawHex) {
+		this.rawHex = rawHex;
 	}
+
+	public Integer getConvertedValue() {
+		return convertedValue;
+	}
+
+	public void setConvertedValue(Integer convertedValue) {
+		this.convertedValue = convertedValue;
+	}
+
 }

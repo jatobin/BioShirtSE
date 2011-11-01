@@ -24,12 +24,12 @@ public class SimpleRead implements Runnable, SerialPortEventListener {
 
     public static void main(String[] args) {
         portList = CommPortIdentifier.getPortIdentifiers();
-        System.out.println("Waiting for serial input..." + portList.nextElement().toString()); // Display the string.
+        System.out.println("Waiting for serial input..."); // Display the string.
         while (portList.hasMoreElements()) {
             portId = (CommPortIdentifier) portList.nextElement();
             System.out.printf("Identifier: %s\n", portId.getName());
             if (portId.getPortType() == CommPortIdentifier.PORT_SERIAL) {
-                 if (portId.getName().equals("COM5")) {
+                 if (portId.getName().equals("/dev/tty.usbserial-FTF87YWQ")) {
                 	 System.out.print("Found an input");
                     SimpleRead reader = new SimpleRead();
                 }
@@ -70,7 +70,7 @@ public class SimpleRead implements Runnable, SerialPortEventListener {
 	} catch (TooManyListenersException e) {System.out.println(e);}
         serialPort.notifyOnDataAvailable(true);
         try {
-            serialPort.setSerialPortParams(9600,
+            serialPort.setSerialPortParams(1000000,
                 SerialPort.DATABITS_8,
                 SerialPort.STOPBITS_1,
                 SerialPort.PARITY_NONE);
@@ -99,8 +99,6 @@ public class SimpleRead implements Runnable, SerialPortEventListener {
             break;
         case SerialPortEvent.DATA_AVAILABLE:
             byte[] readBuffer = new byte[20];
-
-            
             try {
                 while (inputStream.available() > 0) {
                     int numBytes = inputStream.read(readBuffer);
