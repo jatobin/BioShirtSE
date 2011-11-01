@@ -44,7 +44,7 @@ public class UserDAOImpl implements UserDAO {
 			List<Device> devices = new ArrayList<Device>();
 			rs.beforeFirst();
 			while (rs.next()) {
-				Device d = new Device();
+				Device d = new Device("TESTDEVICEID");
 				d.setDeviceID(rs.getString(2));
 				devices.add(d);
 			}

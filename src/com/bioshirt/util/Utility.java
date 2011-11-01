@@ -23,7 +23,7 @@ public class Utility {
 		Date date;
 		
 		try {
-			device = new Device();
+			device = new Device("TESTDEVICEID");
 			device.setDeviceID(jsonObj.getString("deviceid"));
 			accData = new AccelerometerData(jsonObj.getDouble("acc"));
 			cardioData = new CardioData(jsonObj.getInt("hrt"));

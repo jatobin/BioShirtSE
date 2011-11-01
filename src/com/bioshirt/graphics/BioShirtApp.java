@@ -46,18 +46,26 @@ public class BioShirtApp extends JFrame {
 		Thread t = new Thread(new Runnable() {
 			public void run() {
 				while (true) {
+					
+					System.out.println("Running poller for new characters");
+
 //					 sr = SimpleRead.getInstance();
 //					flexValue.setText(String.valueOf((r.nextLong())));
 					byte[] bytes = new byte[2];
 					//replace next lines with code to get the input from serial io
 					r.nextBytes(bytes);
 					String randomHex = Hex.encodeHexString(bytes);
+					char c = randomHex.charAt(0);
+					randomHex = randomHex.replace(c, '0');
+							
+							
 					System.out.println(randomHex.length());
 					flexValue.setText(randomHex);
 					Timestamp date = new Timestamp(System.currentTimeMillis());
 					stidao.insertSTI(new SensorTimeInstance(device, date, randomHex));
-					
-					System.out.println("Running poller for new characters");
+					Integer value = Integer.decode("0x"+randomHex);
+					System.out.println("random hex " + value);
+					flexValue.setForeground(colorMapper(3210, value ));
 
 					try {
 						Thread.sleep(2000);
@@ -69,8 +77,50 @@ public class BioShirtApp extends JFrame {
 				}
 
 			}
+			
+			private Color colorMapper(Integer expected, Integer actual) {
+                //increase if too high
+                int red = 0;
+                //increase if too low
+                int blue = 0;
+                //decrease based on deviation
+                int green = 200;
+                
+                if (actual < expected) {
+                    blue +=Math.abs(expected - actual);
+                    green -= Math.abs(expected - actual);
+                } else if (expected < actual) {
+                    red +=Math.abs(expected - actual);
+                    green -= Math.abs(expected - actual);
+                } else {
+                    green += 50;
+                }
+                
+                if (red > 256) {
+                    red = 254;
+                    green = 0;
+                }
+                
+                if (blue > 256) {
+                    blue = 254;
+                    green = 0;
+                }
+                
+                if (green > 256) {
+                	green = 256;
+                } else if (green < 0) {
+                	green = 0;
+                }
 
-		});
+                Color c = new Color(red,green,blue);
+                System.out.println(c);
+                return c;
+                
+            }
+
+        });
+		
+		
 		t.setPriority(Thread.MAX_PRIORITY);
 		t.start();
 		
