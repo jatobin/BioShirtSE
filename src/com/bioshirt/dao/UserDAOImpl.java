@@ -6,7 +6,7 @@ import java.util.List;
 
 import com.bioshirt.dto.Device;
 import com.bioshirt.dto.User;
-import com.bioshirt.util.DatabaseHelper;
+import com.bioshirt.services.DatabaseHelper;
 
 public class UserDAOImpl implements UserDAO {
 

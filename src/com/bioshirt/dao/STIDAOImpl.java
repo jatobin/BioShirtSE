@@ -5,7 +5,7 @@ import java.util.List;
 import java.sql.Timestamp;
 
 import com.bioshirt.dto.SensorTimeInstance;
-import com.bioshirt.util.DatabaseHelper;
+import com.bioshirt.services.DatabaseHelper;
 
 public class STIDAOImpl implements STIDAO {
 	
