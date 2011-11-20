@@ -77,5 +77,12 @@ public class SensorTimeInstance {
 		}
 	}
 	
+	@Override
+	public String toString() {
+		return "" + device.getDeviceID() + " " + date.toString() + " " + rawHex;
+		
+		
+	}
+	
 
 }

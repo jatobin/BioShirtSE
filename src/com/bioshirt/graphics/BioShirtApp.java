@@ -38,9 +38,10 @@ public class BioShirtApp extends JFrame {
 	private static final JLabel cardValue = new JLabel("Card Value");
 	private static final JLabel acceValue = new JLabel("Acce Value");
 	private static final Random r = new Random();
-//	private static final STIDAO stidao = new STIDAOImpl();
+	private static final STIDAO stidao = new STIDAOImpl();
 	
-//	private static Device device = new Device("TESTDEVICEID");
+	private static Device device = new Device("TESTDEVICEID");
+	private JTextField txtYyyymmdd;
 
 	/**
 	 * Launch the application.
@@ -85,8 +86,8 @@ public class BioShirtApp extends JFrame {
 					
 					System.out.println("random hex:  " + randomHex + randomHexTwo + randomHexThree);
 					
-//					Timestamp date = new Timestamp(System.currentTimeMillis());
-//					stidao.insertSTI(new SensorTimeInstance(device, date, randomHex));
+					Timestamp date = new Timestamp(System.currentTimeMillis());
+					stidao.insertSTI(new SensorTimeInstance(device, date, randomHex));
 
 
 					try {
@@ -274,6 +275,16 @@ public class BioShirtApp extends JFrame {
 		sl_graphPanel.putConstraint(SpringLayout.EAST, button_1, -10, SpringLayout.EAST, graphPanel);
 		button_1.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
+				String date = txtYyyymmdd.getText();
+				
+				Grapher g = new Grapher();
+				g.getPanelDataForDate(date);
+				
+				//if not in the correct format, dont execute
+				//else execute
+				
+				
+				
 			}
 		});
 		graphPanel.add(button_1);
@@ -284,5 +295,12 @@ public class BioShirtApp extends JFrame {
 		sl_graphPanel.putConstraint(SpringLayout.NORTH, button, 6, SpringLayout.SOUTH, comboBox);
 		sl_graphPanel.putConstraint(SpringLayout.NORTH, comboBox, 10, SpringLayout.NORTH, graphPanel);
 		graphPanel.add(comboBox);
+		
+		txtYyyymmdd = new JTextField();
+		txtYyyymmdd.setText("YYYY-MM-DD");
+		sl_graphPanel.putConstraint(SpringLayout.WEST, txtYyyymmdd, 6, SpringLayout.EAST, graphDisplay);
+		sl_graphPanel.putConstraint(SpringLayout.SOUTH, txtYyyymmdd, -6, SpringLayout.NORTH, button_1);
+		graphPanel.add(txtYyyymmdd);
+		txtYyyymmdd.setColumns(10);
 	}
 }
