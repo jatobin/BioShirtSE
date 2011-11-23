@@ -2,8 +2,11 @@ package com.bioshirt.graphics;
 
 import java.awt.Color;
 import java.awt.EventQueue;
+import java.awt.Graphics2D;
 import java.sql.Date;
 import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Random;
 
 import javax.swing.DefaultComboBoxModel;
@@ -23,8 +26,11 @@ import org.apache.commons.codec.binary.Hex;
 import com.bioshirt.dao.STIDAO;
 import com.bioshirt.dao.STIDAOImpl;
 import com.bioshirt.dto.Device;
+import com.bioshirt.dto.FlexData;
 import com.bioshirt.dto.SensorTimeInstance;
 import com.bioshirt.services.SimpleRead;
+import com.bioshirt.services.Utility;
+
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 
@@ -39,9 +45,11 @@ public class BioShirtApp extends JFrame {
 	private static final JLabel acceValue = new JLabel("Acce Value");
 	private static final Random r = new Random();
 	private static final STIDAO stidao = new STIDAOImpl();
+	private JComboBox sensorComboBox;
 	
 	private static Device device = new Device("TESTDEVICEID");
 	private JTextField txtYyyymmdd;
+	private JPanel graphDisplay;
 
 	/**
 	 * Launch the application.
@@ -83,7 +91,7 @@ public class BioShirtApp extends JFrame {
 					value = Integer.decode("0x"+randomHexThree);
 					cardValue.setForeground(colorMapper(2457, value ));
 					
-					
+					randomHex = randomHex + randomHexTwo + randomHexThree;
 					System.out.println("random hex:  " + randomHex + randomHexTwo + randomHexThree);
 					
 					Timestamp date = new Timestamp(System.currentTimeMillis());
@@ -91,7 +99,7 @@ public class BioShirtApp extends JFrame {
 
 
 					try {
-						Thread.sleep(2000);
+						Thread.sleep(10000);
 					} catch (InterruptedException e) {
 						// TODO Auto-generated catch block
 						System.out.print("Interrupted");
@@ -253,17 +261,16 @@ public class BioShirtApp extends JFrame {
 		sl_displayPanel.putConstraint(SpringLayout.WEST, cardValue, 6, SpringLayout.EAST, cardLabel);
 		displayPanel.add(cardValue);
 		
-		JPanel graphPanel = new JPanel();
+		 JPanel graphPanel = new JPanel();
 		tabbedPane.addTab("Graph", null, graphPanel, null);
 		SpringLayout sl_graphPanel = new SpringLayout();
 		graphPanel.setLayout(sl_graphPanel);
 		
-		JPanel graphDisplay = new JPanel();
-		sl_graphPanel.putConstraint(SpringLayout.WEST, graphDisplay, 10, SpringLayout.WEST, graphPanel);
-		sl_graphPanel.putConstraint(SpringLayout.EAST, graphDisplay, 475, SpringLayout.WEST, graphPanel);
-		graphDisplay.setBackground(Color.WHITE);
+		graphDisplay = new JPanel();
 		sl_graphPanel.putConstraint(SpringLayout.NORTH, graphDisplay, 10, SpringLayout.NORTH, graphPanel);
+		sl_graphPanel.putConstraint(SpringLayout.WEST, graphDisplay, 33, SpringLayout.WEST, graphPanel);
 		sl_graphPanel.putConstraint(SpringLayout.SOUTH, graphDisplay, 339, SpringLayout.NORTH, graphPanel);
+		graphDisplay.setBackground(Color.WHITE);
 		graphPanel.add(graphDisplay);
 		
 		JButton button = new JButton("Choose Date");
@@ -275,30 +282,225 @@ public class BioShirtApp extends JFrame {
 		sl_graphPanel.putConstraint(SpringLayout.EAST, button_1, -10, SpringLayout.EAST, graphPanel);
 		button_1.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				String date = txtYyyymmdd.getText();
 				
-				Grapher g = new Grapher();
-				g.getPanelDataForDate(date);
+				
+				Graphics2D g = (Graphics2D) graphDisplay.getGraphics();
+		
+				Integer height = graphDisplay.getHeight();
+				Integer width = graphDisplay.getWidth();
+				System.out.println("Height: " + height);
+				System.out.println("Width: "  + width);
+				
+				String date = txtYyyymmdd.getText();
+				String sensor = (String) sensorComboBox.getSelectedItem();
+				
+				ArrayList<SensorTimeInstance> stis = (ArrayList<SensorTimeInstance>) stidao.getSTIForTime(date);
+				
+				if (stis.size() == 0) {
+					System.out.println("No data for date!");
+					return;
+				} else {
+				g.drawString("Time", width / 2, height - 20);
+				
+					//scale the height
+				
+					//scale the width
+					//for each point, scale it so it is a range of 10 to width, 10 to height.
+	
+				//calculate the interval
+				//max - min / total
+				Timestamp max = stis.get(stis.size() - 1).getDate();
+				
+				Integer tempMaxSum = 0;
+				tempMaxSum += max.getHours() * 3600;
+				tempMaxSum += max.getMinutes() * 60;
+				tempMaxSum += max.getSeconds();
+				System.out.println("MaxTime: " + tempMaxSum);
+				
+				
+				Timestamp min = stis.get(0).getDate();
+				Integer tempMinSum = 0;
+				tempMinSum += min.getHours() * 3600;
+				tempMinSum += min.getMinutes() * 60;
+				tempMinSum += min.getMinutes();
+				int range = tempMaxSum - tempMinSum;
+				System.out.println("MinSum: " + tempMinSum);
+				
+				int rangeStep = width / stis.size();
+				System.out.println("Range:"+ rangeStep);
+				
+//				int newHeight = tempMaxSum > 600 ? 600 : (image.getHeight() * 800)/image.getWidth();
+				
+				//divide everything by scale factor.
+				//scale factor is determined by the max height of values / height of screen.
+				// maxWidth of Values / width of screen
+				
+//				g.setBackground(Color.black);
+//				g.drawOval(20, 20, 5, 5);
+//				g.fillOval(20, 20, 5, 5);
+//				g.fillOval(0, 0, 5, 5);
+//				g.fillOval(10, 10, 5, 5);
+//				g.fillOval(30, 30, 5, 5);
+//					
+				
+				//get the data
+				//parse for accelerometer
+				if (sensor.equalsIgnoreCase("Accelerometer")) {
+					g.setColor(Color.green);
+					//TODO remaining logic goes in each of these
+					Integer maxY = Integer.MIN_VALUE;
+					Integer minY = Integer.MAX_VALUE;
+					
+					//get Maximum and minimum
+					for (SensorTimeInstance s : stis) {
+						if (s.getAcdata().getAccData() > maxY) {
+							maxY = s.getAcdata().getAccData();
+						}
+						
+						if (s.getFlexdata().getConvertedValue() < minY) {
+							minY = s.getAcdata().getAccData();
+						}
+					}
+					//scale factor is max 
+					int scaleX = Math.round(range / width);
+					int scaleY = Math.round((maxY - minY) / height);
+					//TODO change this
+					g.drawLine(0, FlexData.EXPECTED_FLEX_VALUE / scaleY, width, FlexData.EXPECTED_FLEX_VALUE / scaleY);
+					g.setColor(Color.black);
+					Integer tempX = Utility.getValue(stis.get(0).getDate()) / scaleX;
+					Integer tempY = stis.get(0).getAcdata().getAccData() / scaleY;
+					Integer curX = 0;
+					Integer curY = 0;
+					System.out.println(tempX + " " + tempY);
+					for (SensorTimeInstance s : stis) {
+						curY = (s.getAcdata().getAccData() / scaleY) ;
+						curX += rangeStep;
+						System.out.println("ScaledX: " + curX + ", ScaledY: " + curY);
+						g.fillOval(curX, height - curY, 5, 5);
+						g.drawLine(curX, height - curY, tempX, height - tempY);
+						tempX = curX;
+						tempY = curY;
+					}
+					
+				}
+				
+				//parse for cardiometer
+				else if (sensor.equalsIgnoreCase("Cardiometer")) {
+					g.setColor(Color.green);
+					//TODO remaining logic goes in each of these
+					Integer maxY = Integer.MIN_VALUE;
+					Integer minY = Integer.MAX_VALUE;
+					
+					//get Maximum and minimum
+					for (SensorTimeInstance s : stis) {
+						if (s.getCardata().getBPMrate() > maxY) {
+							maxY = s.getCardata().getBPMrate();
+						}
+						
+						if (s.getCardata().getBPMrate() < minY) {
+							minY = s.getCardata().getBPMrate();
+						}
+					}
+					//scale factor is max 
+					int scaleX = Math.round(range / width);
+					int scaleY = Math.round((maxY - minY) / height);
+					if (scaleY == 0) {
+						scaleY = 1;
+					}
+					System.out.println("Scale X: " + scaleX + ", Scale Y: " + scaleY);
+					//TODO change this
+					g.drawLine(0, 140, width, 140);
+					g.setColor(Color.black);
+					Integer tempX =  Utility.getValue(stis.get(0).getDate()) / scaleX;
+					Integer tempY = stis.get(0).getCardata().getBPMrate()  / scaleY;
+					Integer curX = 0;
+					Integer curY = 0;
+					System.out.println(tempX + " " + tempY);
+					for (SensorTimeInstance s : stis) {
+						curY = (s.getCardata().getBPMrate() / scaleY) ;
+						curX += rangeStep;
+						System.out.println("ScaledX: " + curX + ", ScaledY: " + curY);
+						g.fillOval(curX, height - curY, 5, 5);
+						g.drawLine(curX, height - curY, tempX, height - tempY);
+						tempX = curX;
+						tempY = curY;
+					}
+					
+				}
+					
+					
+				
+				
+				//parse for flex sensor
+				else if (sensor.equalsIgnoreCase("Flex Sensor")) {
+					g.setColor(Color.green);
+					//TODO remaining logic goes in each of these
+					Integer maxY = Integer.MIN_VALUE;
+					Integer minY = Integer.MAX_VALUE;
+					
+					//get Maximum and minimum
+					for (SensorTimeInstance s : stis) {
+						if (s.getFlexdata().getConvertedValue() > maxY) {
+							maxY = s.getFlexdata().getConvertedValue();
+						}
+						
+						if (s.getFlexdata().getConvertedValue() < minY) {
+							minY = s.getFlexdata().getConvertedValue();
+						}
+					}
+					//scale factor is max 
+					int scaleX = Math.round(range / width);
+					int scaleY = Math.round((maxY - minY) / height);
+					g.drawLine(0, FlexData.EXPECTED_FLEX_VALUE / scaleY, width, FlexData.EXPECTED_FLEX_VALUE / scaleY);
+					g.setColor(Color.black);
+					Integer tempX = stis.get(0).getFlexdata().getConvertedValue() / scaleX;
+					Integer tempY = Utility.getValue(stis.get(0).getDate()) / scaleY;
+					Integer curX = 0;
+					Integer curY = 0;
+					System.out.println(tempX + " " + tempY);
+					for (SensorTimeInstance s : stis) {
+						curY = (s.getFlexdata().getConvertedValue() / scaleY) ;
+						curX += rangeStep;
+						System.out.println("ScaledX: " + curX + ", ScaledY: " + curY);
+						g.fillOval(curX, height - curY, 5, 5);
+						g.drawLine(curX, height - curY, tempX, height - tempY);
+						tempX = curX;
+						tempY = curY;
+					}
+					
+				}
+				
+				else {
+				}
+				//make calculate the range of time
+				//calculate the range of y's
+				//zip the points together
+				//for each point 
 				
 				//if not in the correct format, dont execute
 				//else execute
 				
 				
 				
+				}
+				
 			}
 		});
 		graphPanel.add(button_1);
 		
-		JComboBox comboBox = new JComboBox();
-		sl_graphPanel.putConstraint(SpringLayout.WEST, comboBox, 20, SpringLayout.EAST, graphDisplay);
-		sl_graphPanel.putConstraint(SpringLayout.EAST, comboBox, -10, SpringLayout.EAST, graphPanel);
-		sl_graphPanel.putConstraint(SpringLayout.NORTH, button, 6, SpringLayout.SOUTH, comboBox);
-		sl_graphPanel.putConstraint(SpringLayout.NORTH, comboBox, 10, SpringLayout.NORTH, graphPanel);
-		graphPanel.add(comboBox);
+		sensorComboBox = new JComboBox();
+		sl_graphPanel.putConstraint(SpringLayout.EAST, graphDisplay, -6, SpringLayout.WEST, sensorComboBox);
+		sl_graphPanel.putConstraint(SpringLayout.WEST, sensorComboBox, 478, SpringLayout.WEST, graphPanel);
+		sl_graphPanel.putConstraint(SpringLayout.EAST, sensorComboBox, -10, SpringLayout.EAST, graphPanel);
+		sensorComboBox.setModel(new DefaultComboBoxModel(new String[] {"Accelerometer", "Cardiometer", "Flex Sensor"}));
+		sensorComboBox.setSelectedIndex(0);
+		sl_graphPanel.putConstraint(SpringLayout.NORTH, button, 6, SpringLayout.SOUTH, sensorComboBox);
+		sl_graphPanel.putConstraint(SpringLayout.NORTH, sensorComboBox, 10, SpringLayout.NORTH, graphPanel);
+		graphPanel.add(sensorComboBox);
 		
 		txtYyyymmdd = new JTextField();
+		sl_graphPanel.putConstraint(SpringLayout.WEST, txtYyyymmdd, 481, SpringLayout.WEST, graphPanel);
 		txtYyyymmdd.setText("YYYY-MM-DD");
-		sl_graphPanel.putConstraint(SpringLayout.WEST, txtYyyymmdd, 6, SpringLayout.EAST, graphDisplay);
 		sl_graphPanel.putConstraint(SpringLayout.SOUTH, txtYyyymmdd, -6, SpringLayout.NORTH, button_1);
 		graphPanel.add(txtYyyymmdd);
 		txtYyyymmdd.setColumns(10);

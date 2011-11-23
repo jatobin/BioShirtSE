@@ -2,19 +2,23 @@ package com.bioshirt.dto;
 
 public class AccelerometerData {
 
-	private double accData;
-
-	public AccelerometerData(double accData) {
+	private Integer accData;
+	
+	public AccelerometerData() {
 		super();
-		this.accData = accData;
+		this.accData = 0;
 	}
 
-	public double getAccData() {
+	public Integer getAccData() {
 		return accData;
 	}
 
-	public void setAccData(double accData) {
+	public void setAccData(Integer accData) {
 		this.accData = accData;
+	}
+	
+	public void increment(Integer newStep) {
+		accData = accData + newStep;
 	}
 
 }

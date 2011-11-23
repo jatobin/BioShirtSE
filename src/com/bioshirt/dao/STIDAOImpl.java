@@ -35,8 +35,6 @@ public class STIDAOImpl implements STIDAO {
 			List<SensorTimeInstance> stis = new ArrayList<SensorTimeInstance	>();
 			rs.beforeFirst();
 			while (rs.next()) {
-				
-				
 				Device d = new Device(rs.getString(2));
 				Timestamp newDate = rs.getTimestamp(3);
 				String hex = rs.getString(4);

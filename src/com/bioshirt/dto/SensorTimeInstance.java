@@ -64,16 +64,19 @@ public class SensorTimeInstance {
 	
 	private void parseRawHex(String rawHex) {
 		if (rawHex.length() >= 4 ) {
-			String flexsubsequence = rawHex.substring(0, 3);
+			String flexsubsequence = rawHex.substring(0, 4);
 			this.flexdata = new FlexData(flexsubsequence);
 		} 
 		//TODO as 
 		if (rawHex.length() >= 10) {
 			String acclsubsequence = rawHex.substring(4, 9);
+			acdata = new AccelerometerData();
+			acdata.setAccData(Integer.decode("0x" +acclsubsequence));
 		}
 		
 		if (rawHex.length() >= 12) {
-			String cardsubsequence = rawHex.substring(10, rawHex.length() - 1);
+			String cardsubsequence = rawHex.substring(9, rawHex.length() - 1);
+			this.cardata = new CardioData(Integer.decode("0x" + cardsubsequence));
 		}
 	}
 	

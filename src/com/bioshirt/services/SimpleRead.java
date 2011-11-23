@@ -60,6 +60,8 @@ public class SimpleRead implements Runnable, SerialPortEventListener {
     public void run() {
         try {
             Thread.sleep(20000);
+            //TODO constantly poll for new Data, have to get a large sampling ~60Hz, then insert every two seconds and determine 
+            //steps taken
         } catch (InterruptedException e) {System.out.println(e);}
     }
 

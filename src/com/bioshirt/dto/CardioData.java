@@ -3,7 +3,7 @@ package com.bioshirt.dto;
 public class CardioData  {
 	
 	
-	private int BPMrate;
+	private Integer BPMrate;
 	
 	public CardioData(int bPMrate) {
 		super();
